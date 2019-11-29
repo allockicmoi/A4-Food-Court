@@ -20,7 +20,9 @@ public class shopper : MonoBehaviour
     DateTime entered_shop;
     DateTime sat_down;
     int moving = 1;
-
+    public bool flyered = false;
+    DateTime flyered_time = new DateTime();
+    int flyered_seconds=2;
     public Vector3 direction = new Vector3();
     public Vector3 destination = new Vector3();
   
@@ -68,49 +70,102 @@ public class shopper : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
         if (this.transform.position.x > 195)
+            {
+                Destroy(this.gameObject);
+            }
+        if (!flyered)
         {
-            Destroy(this.gameObject);
+            int isbyflyer = Isbyflyer();
+
+
+            if (isbyflyer != -1)
+            {
+                deleteflyer(isbyflyer);
+                setFlyered();
+            }
+            else if (status == 0 && isInRange())
+            {
+                EnterShop();
+            }
+            else if (status == 1 && isInRange())
+            {
+                entered_shop = DateTime.Now;
+                moving = 0;
+                status += 1;
+            }
+            else if (status == 2 && (DateTime.Now - entered_shop).TotalSeconds > 1)
+            {
+                destination = shop_to_visit.transform.GetChild(4).position;
+                status += 1;
+                moving = 1;
+            }
+            else if (status == 3 && isInRange())
+            {
+                FindSeat();
+            }
+            else if (status == 4 && isAtSeat())
+            {
+                moving = 0;
+                sat_down = DateTime.Now;
+                status += 1;
+            }
+            else if (status == 5 && (DateTime.Now - sat_down).TotalSeconds > 2)
+            {
+                goDespawn();
+            }
+            else if (moving == 1)
+            {
+                transform.position += nav.ComputeDisplacement(this) / 2;
+                //  Debug.Log(nav.ComputeDisplacement(transform.position, destination,transform.name));
+                last_update = DateTime.Now;
+            }
         }
-        if(status == 0 && isInRange())
+        else
         {
-           EnterShop();
+            if ((DateTime.Now - flyered_time).TotalSeconds > flyered_seconds)
+            {
+                unflyer();
+            }
         }
-        else if(status ==1 && isInRange())
-        {
-            entered_shop = DateTime.Now;
-            moving = 0;
-            status += 1;
-        }
-        else if( status ==2 && (DateTime.Now-entered_shop).TotalSeconds>1)
-        {
-            destination = shop_to_visit.transform.GetChild(4).position;
-            status += 1;
-            moving = 1;
-        }
-        else if (status == 3 && isInRange())
-        {
-            FindSeat();
-        }
-        else if(status ==4 && isAtSeat())
-        {
-            moving = 0;
-            sat_down = DateTime.Now;
-            status += 1;
-        }
-        else if (status ==5 && (DateTime.Now - sat_down).TotalSeconds > 2)
-        {
-            goDespawn();
-        }
-        else if(moving==1)
-        {
-            transform.position += nav.ComputeDisplacement(this)/2;
-            //  Debug.Log(nav.ComputeDisplacement(transform.position, destination,transform.name));
-            last_update = DateTime.Now;
-        }
-        
        
+    }
+
+    private void unflyer()
+    {
+        transform.GetComponent<Renderer>().material.color = Color.red;
+        flyered = false;
+        
+
+    }
+
+    private void setFlyered()
+    {
+        transform.GetComponent<Renderer>().material.color = Color.magenta;
+        flyered = true;
+        flyered_time = DateTime.Now;
+
+    }
+
+    private int Isbyflyer()
+    {
+        Transform parent = transform.parent;
+        shoppers shoppers = parent.GetComponent<shoppers>();
+        GameObject flyers = shoppers.flyers;
+        for(int i = 0; i < flyers.transform.childCount; i++)
+        {
+            if (Vector3.Distance(transform.position, flyers.transform.GetChild(i).position) < 3)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private void deleteflyer(int isbyflyer)
+    {
+        Destroy(transform.parent.GetComponent<shoppers>().flyers.transform.GetChild(isbyflyer).gameObject);
+        
     }
 
     private void goDespawn()

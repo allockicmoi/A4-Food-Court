@@ -11,7 +11,7 @@ public class shoppers : MonoBehaviour
     public GameObject shopper_prefab;
     DateTime lastspawn;
     public EatingArea eating_area;
-
+    public GameObject flyers;
     public double spawnSpeed = 1;
     // Start is called before the first frame update
     void Start()
@@ -34,7 +34,7 @@ public class shoppers : MonoBehaviour
 
     public void SetSpeed(float value)
     {
-        spawnSpeed = value * 10;
-        rate.text = "X" +(int)spawnSpeed;
+        spawnSpeed = value * 5;
+        rate.text = "X" +(int)spawnSpeed*2;
     }
 }
