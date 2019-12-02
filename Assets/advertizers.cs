@@ -23,10 +23,18 @@ public class advertizers : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        radius_display.text = "" + obs_d;
+        InitDisplay();
     }
 
-    
+    private void InitDisplay()
+    {
+        radius_display.text = "" + obs_d;
+        sales_d_display.text = "" + sales_d;
+        adv_rate.text = "" + flyer_timer;
+        disp_flyer_prob.text = "" + (int)(flyer_prob) + "%";
+        advs_disp.text = "" + num_adv;
+    }
+
 
     private Vector3 FindPosition()
     {

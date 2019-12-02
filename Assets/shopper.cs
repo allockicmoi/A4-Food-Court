@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class shopper : MonoBehaviour 
+public class shopper : Agent
 {
     public DateTime last_update = DateTime.Now;
     public System.Random rand = new System.Random();
@@ -23,8 +23,7 @@ public class shopper : MonoBehaviour
     public bool flyered = false;
     DateTime flyered_time = new DateTime();
     int flyered_seconds=2;
-    public Vector3 direction = new Vector3();
-    public Vector3 destination = new Vector3();
+   
   
     
 

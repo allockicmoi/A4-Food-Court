@@ -71,7 +71,7 @@ public class EatingArea : MonoBehaviour
         Vector3 pos = new Vector3(rand.Next(150) - 75, 1, rand.Next(70) - 35);
         hitColliders = Physics.OverlapSphere(pos,40);
         int max = 0;
-        while (hitColliders.Length != 1 && max < 100)
+        while (hitColliders.Length != 1 && max < 500)
         {
             pos = new Vector3(rand.Next(150) - 75, 1, rand.Next(70) - 35);
             hitColliders = Physics.OverlapSphere(pos, 40);

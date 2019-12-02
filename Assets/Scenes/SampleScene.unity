@@ -808,12 +808,12 @@ MonoBehaviour:
   num_adv: 1
   flyers: {fileID: 2136346608}
   radius_display: {fileID: 763076757}
-  obs_d: 0
-  sales_d: 20
+  obs_d: 30
+  sales_d: 30
   sales_d_display: {fileID: 1469813011}
   flyer_timer: 1
   adv_rate: {fileID: 1845471307}
-  flyer_prob: 0
+  flyer_prob: 50
   disp_flyer_prob: {fileID: 1761015218}
   advs_disp: {fileID: 927513125}
 --- !u!1 &306239505

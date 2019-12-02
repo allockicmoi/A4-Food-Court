@@ -5,15 +5,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class advertizer : MonoBehaviour
+public class advertizer : Agent
 {
     public int flyer_timer = 5;
     public double flyer_prob = 0.5;
     private int state = 0;
     DateTime last_flyer = new DateTime();
     System.Random rand = new System.Random();
-    public Vector3 direction = new Vector3();
-    public Vector3 destination = new Vector3();
+   
     public SteeringForcesNavigator nav = new SteeringForcesNavigator();
     public GameObject flyers;
     public GameObject flyer_prefab;
@@ -39,31 +38,36 @@ public class advertizer : MonoBehaviour
     void Update()
     {
         set_obs_distance();
-        if(state == 0) {
+        if (state == 0)
+        {
             shopper shopper = FindFlyered();
             if (shopper != null)
             {
                 ChaseShopper(shopper);
             }
-        else if (isInRange())
-        {
-            setRandomDest();
+            else if (isInRange())
+            {
+                setRandomDest();
+            }
+            else
+            {
+                transform.position += nav.ComputeDisplacement(this) / (float)1.2;
+            }
+            if ((transform.position.z > 40 || transform.position.z < -40) && (DateTime.Now - last_flyer).TotalSeconds > 100 / flyer_timer)
+            {
+                if (rand.Next(10) / 10.0 < flyer_prob)
+                {
+                    GameObject flyer = Instantiate(flyer_prefab, flyers.transform);
+                    flyer.transform.position = transform.position;
+                    last_flyer = DateTime.Now;
+                }
+            }
         }
-        else
-        {
-        transform.position+=nav.ComputeDisplacement(this) / (float)1.5;
-        }
-        if ((transform.position.z > 40 || transform.position.z < -40) && (DateTime.Now - last_flyer).TotalSeconds > 100/flyer_timer  ){
-            if(rand.Next(10) / 10.0 < flyer_prob) { 
-            GameObject flyer = Instantiate(flyer_prefab, flyers.transform);
-            flyer.transform.position = transform.position;}
-            last_flyer = DateTime.Now;
-        }
-        }
-        else if( state ==1)
+
+        else if (state == 1)
         {
             destination = target.transform.position;
-            transform.position += nav.ComputeDisplacement(this)/(float)1.5;
+            transform.position += nav.ComputeDisplacement(this) / (float)1.2;
             if (isInTargetRange())
             {
                 state++;
@@ -71,23 +75,24 @@ public class advertizer : MonoBehaviour
             }
 
         }
-        else if(state == 2)
+        else if (state == 2)
         {
             if (isInTargetRange())
             {
                 destination = target.transform.position;
-                transform.position += nav.ComputeDisplacement(this) /(float) 1.2;
-                if((DateTime.Now-timer).TotalSeconds> chase_time)
+                transform.position += nav.ComputeDisplacement(this) / (float)1.5;
+                if ((DateTime.Now - timer).TotalSeconds > chase_time)
                 {
                     StartPause();
                 }
             }
             else
-            {state = 0;
-                
+            {
+                state = 0;
+
             }
         }
-        else if(state == 3)
+        else if (state == 3)
         {
             if ((DateTime.Now - pause_start).TotalSeconds > pause_time)
             {
